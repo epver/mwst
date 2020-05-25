@@ -1,0 +1,23 @@
+{
+  "name": "mwst",
+  "version": "0.0.1",
+  "description": "This package is used TypeScript write, it's supported Amazon Marketplace Web Service (MWS). TypeScript bring advanced syntax tips，Help you write better。",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuesets/mwst.git"
+  },
+  "author": "vuesets",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vuesets/mwst/issues"
+  },
+  "homepage": "https://github.com/vuesets/mwst#readme",
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "node-fetch": "^2.6.0"
+  }
+}

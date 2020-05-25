@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "allowJs": false,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "noLib": false,
+    "lib": ["es2017", "esnext.asynciterable"],
+    "noUnusedLocals": false,
+    "strict": false,
+    "strictPropertyInitialization": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
