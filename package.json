@@ -17,7 +17,13 @@
   },
   "homepage": "https://github.com/vuesets/mwst#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
     "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.5",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3"
   }
 }
