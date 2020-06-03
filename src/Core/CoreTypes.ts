@@ -48,3 +48,37 @@ export interface IApi {
   Access: IAccess;
   Seller: ISeller;
 }
+
+
+// amazon
+export interface IGetServiceStatus {
+  Status?: 'GREEN' | 'YELLOW' | 'RED'; // Type:xs:string
+  Timestamp?: string; // Type:xs:dateTime
+  [message: string]: string; // messages
+}
+
+export interface IAddress {
+  Name: string; // Type:xs:string
+  Line1: string; // Type:xs:string
+  Line2?: string; // Type:xs:string
+  Line3?: string; // Type:xs:string
+  DistrictOrCounty?: string; // Type:xs:string
+  City?: string; // Type:xs:string
+  StateOrProvinceCode: string; // Type:xs:string
+  CountryCode: string; // Type:xs:string
+  PostalCode?: string; // Type:xs:string
+  PhoneNumber?: string; // Type:xs:string
+}
+
+export interface IWeight {
+  Unit: 'KG' | 'LB'; // Type:xs:string
+  Value: string; // Type:xs:string
+}
+
+export interface IError {
+  Code: string;
+  Type: string;
+  Message: string;
+  Detail?: string;
+}
+

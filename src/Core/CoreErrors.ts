@@ -130,6 +130,9 @@ export class LocalExceededError extends MwsException{
 }
 
 export class CheckParameterError extends MwsException {
+  constructor(objectOrError?: string | object | any, description = '[0] Local check parameter error.') {
+    super(MwsException.create(objectOrError, description));
+  }
 }
 
 export class NoOverridingError extends MwsException {

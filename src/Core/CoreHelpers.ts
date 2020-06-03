@@ -1,3 +1,5 @@
+import {join} from 'path';
+import {writeFileSync} from 'fs';
 import request, {Options, Response} from 'request';
 import {IArea, IObject, TArea} from './CoreTypes';
 import {
@@ -68,6 +70,14 @@ export const splitArray = (arr: any[], size: number): any[] => {
 
 export const sleepSecond = (second: number = 1): Promise<null> => {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
+};
+
+export const dumpObject = (obj: any, dir?: string, name?: string): void => {
+  const content = JSON.stringify(obj, null, '  ');
+  console.log(content); // tslint:disable-line
+  if (!isUndefined(dir)) {
+    writeFileSync(join(dir, `testing-${name || 'mock'}.json`), content, {encoding: 'utf-8'});
+  }
 };
 
 export const listTakeOffLayer = (key: string, ct: any): any => {

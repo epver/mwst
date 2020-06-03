@@ -61,8 +61,8 @@ export class Api implements IApi {
     await sleepSecond(second);
   }
 
-  public CreateOptions(params: Record<string, any>, parsing?: Record<string, any>): Options {
-    if (hasKeyObject(parsing)) {
+  public CreateOptions(params?: Record<string, any>, parsing?: Record<string, any>): Options {
+    if (params && hasKeyObject(parsing)) {
       const assign = {};
       for (const key of Object.keys(parsing)) {
         const prefix = parsing[key];
