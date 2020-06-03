@@ -5,13 +5,14 @@ TypeScript bring advanced syntax tips，Help you write better。
 
 # Project TODOs
 
-- [ ] Core
+- [x] Core
 - [ ] EasyShip -- `v2018-09-01`
 - [ ] Feeds -- `v2009-01-01`
 - [ ] Finances -- `v2015-05-01`
 - [ ] FulfillmentInboundShipment -- `v2010-10-01`
 - [ ] FulfillmentInventory -- `v2010-10-01`
 - [ ] FulfillmentOutboundShipment -- `v2010-10-01`
+- [ ] OffAmazonPayments -- `0000`
 - [ ] MerchantFulfillment -- `v2015-06-01`
 - [ ] Orders -- `v2013-09-01`
 - [ ] Products -- `v2011-10-01`
