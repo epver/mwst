@@ -4,7 +4,7 @@ import {parse as xmlParser} from 'fast-xml-parser';
 import {IApi, IHeaders, IAccess, ISeller, ISetting, TMethod, TArea, IArea, IOptions} from './CoreTypes';
 import {defaultAccess, defaultSeller} from './Env';
 import {CreateArea, sortObject, sleepSecond, isArray, hasKeyObject, RunRequest} from './CoreHelpers';
-import {ConfigurationError, LocalExceededError, QuotaExceeded, RequestThrottled, RequestTimeoutError, UndefinedRequestError, NoOverridingError} from './CoreErrors';
+import {ConfigurationError, LocalExceededError, QuotaExceeded, RequestThrottled, RequestTimeoutError, UndefinedRequestError, NoOverridingError, LocalParserError} from './CoreErrors';
 
 
 export class Api implements IApi {
@@ -69,7 +69,7 @@ export class Api implements IApi {
 
     const {
       Path, Method, Action, Version, Headers,
-      Area: {Host},
+      Area: {Id: AreaId, Host: AreaHost},
       Seller: {SellerId, MWSAuthToken},
       Setting: {IsMerchant, Timeout},
       Access: {AWSAccessKeyId, AWSAccessSecret}
@@ -86,21 +86,22 @@ export class Api implements IApi {
     PreParams.SignatureVersion = '2';
     IsMerchant ? PreParams.Merchant = SellerId : PreParams.SellerId = SellerId;
     PreParams.Signature = createHmac('sha256', AWSAccessSecret)
-      .update([Method, Host, RemotePath, qsStringify(sortObject(PreParams))].join('\n'))
+      .update([Method, AreaHost, RemotePath, qsStringify(sortObject(PreParams))].join('\n'))
       .digest('base64');
 
+    const protocol = AreaId === 'TEST' ? 'http:' : 'https:';
     const PreOptions = {} as IOptions;
 
-    Headers['Host'] = Host;
+    Headers['Host'] = AreaHost;
     if (Method === 'GET') {
-      PreOptions.url = `https://${Host}${RemotePath}?${qsStringify(PreParams)}`;
+      PreOptions.url = `${protocol}//${AreaHost}${RemotePath}?${qsStringify(PreParams)}`;
       PreOptions.init = {
         headers: Headers,
         timeout: Timeout * 1000
       };
     } else {
       Headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      PreOptions.url = `https://${Host}${RemotePath}`;
+      PreOptions.url = `${protocol}//${AreaHost}${RemotePath}`;
       PreOptions.init = {
         headers: Headers,
         timeout: Timeout * 1000,
@@ -144,6 +145,8 @@ export class Api implements IApi {
     const res = xmlParser(body, {ignoreNameSpace: true, parseTrueNumberOnly: true}) as any;
     if (res.ErrorResponse) {
       throw new UndefinedRequestError(body, 600);
+    } else if (!res[`${Action}Response`] || !res[`${Action}Response`][`${Action}Result`]){
+      throw new LocalParserError(body, 0)
     } else {
       return res[`${Action}Response`][`${Action}Result`];
     }

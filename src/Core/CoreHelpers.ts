@@ -1,6 +1,7 @@
 import {join} from 'path';
 import {writeFileSync} from 'fs';
 import fetch from 'node-fetch';
+import {testingPort} from './Env';
 import {IArea, IObject, IOptions, TArea} from './CoreTypes';
 import {
   AccessDenied, CoreException,
@@ -67,7 +68,7 @@ export const splitArray = (arr: any[], size: number): any[] => {
   return rs;
 };
 
-export const sleepSecond = (second: number = 1): Promise<null> => {
+export const sleepSecond = (second = 1): Promise<null> => {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
 };
 
@@ -110,6 +111,7 @@ export function CreateArea(area: TArea): IArea {
     JP: {Id: 'A1VC38T7YXB528', Host: 'mws.amazonservices.jp'},
     CN: {Id: 'AAHKV2X7AFYLW', Host: 'mws.amazonservices.com.cn'},
     US: {Id: 'ATVPDKIKX0DER', Host: 'mws.amazonservices.com'},
+    TEST: {Id: 'TEST', Host: `127.0.0.1:${testingPort}`},
   };
   return areas[area];
 }

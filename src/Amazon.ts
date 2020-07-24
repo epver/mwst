@@ -1,4 +1,4 @@
-import {IAccess, IArea, ISeller, TArea} from './Core';
+import {IAccess, ISeller, TArea} from './Core';
 import {ApiEasyShip} from './EasyShip';
 import {ApiFeeds} from './Feeds';
 import {ApiFinances} from './Finances';

@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
+import {config as dotConfig} from 'dotenv';
 import {IAccess, IHeaders, ISeller, ISetting, TArea} from './CoreTypes';
 
-dotenv.config();
+dotConfig();
 
 export const defaultSetting: ISetting = {
   Convert: process.env.API_CONVERT === 'XML' ? 'JSON' : 'JSON',
@@ -26,3 +26,5 @@ export const defaultSeller: ISeller = {
   SellerId: '',
   MWSAuthToken: ''
 };
+
+export const testingPort: number = Number(process.env.TESTING_PORT) || 36800

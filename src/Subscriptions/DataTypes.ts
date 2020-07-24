@@ -1,2 +1,2 @@
-export interface ITest {
+export interface ISubscriptions {
 }

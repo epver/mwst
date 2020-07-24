@@ -2,7 +2,7 @@ export type TMethod = 'GET' | 'POST';
 
 export type TConvert = 'JSON' | 'XML';
 
-export type TArea = 'BR' | 'CA' | 'MX' | 'AE' | 'DE' | 'ES' | 'FR' | 'GB' | 'IN' | 'IT' | 'TR' | 'AU' | 'JP' | 'CN' | 'US';
+export type TArea = 'BR' | 'CA' | 'MX' | 'AE' | 'DE' | 'ES' | 'FR' | 'GB' | 'IN' | 'IT' | 'TR' | 'AU' | 'JP' | 'CN' | 'US' | 'TEST';
 
 export interface IArea {
   Id: string;

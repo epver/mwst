@@ -9,14 +9,8 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "allowJs": false,
-    "esModuleInterop": true,
-    "noImplicitAny": false,
-    "noLib": false,
-    "lib": ["es2017", "esnext.asynciterable"],
-    "noUnusedLocals": false,
-    "strict": false,
-    "strictPropertyInitialization": false
+    "incremental": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
