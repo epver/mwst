@@ -5,7 +5,7 @@ dotenv.config();
 
 export const defaultSetting: ISetting = {
   Convert: process.env.API_CONVERT === 'XML' ? 'JSON' : 'JSON',
-  Timeout: Number(process.env.API_TIMEOUT) || 180,
+  Timeout: Number(process.env.API_TIMEOUT) || 360,
   Retrying: Number(process.env.API_RETRYING) || 6,
   Throttled: Number(process.env.API_THROTTLED) || 0,
   IsMerchant: false

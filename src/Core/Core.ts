@@ -1,18 +1,11 @@
 import {createHmac} from 'crypto';
-import {Options} from 'request';
 import {stringify as qsStringify} from 'querystring';
 import {parse as xmlParser} from 'fast-xml-parser';
-import {IApi, IHeaders, IAccess, ISeller, ISetting, TMethod, TArea, IArea} from './CoreTypes';
+import {IApi, IHeaders, IAccess, ISeller, ISetting, TMethod, TArea, IArea, IOptions} from './CoreTypes';
 import {defaultAccess, defaultSeller} from './Env';
-import {CreateArea, sortObject, sleepSecond, Requesting, isArray, hasKeyObject} from './CoreHelpers';
-import {
-  ConfigurationError,
-  LocalExceededError,
-  QuotaExceeded,
-  RequestThrottled,
-  RequestTimeoutError,
-  UndefinedRequestError,
-} from './CoreErrors';
+import {CreateArea, sortObject, sleepSecond, isArray, hasKeyObject, RunRequest} from './CoreHelpers';
+import {ConfigurationError, LocalExceededError, QuotaExceeded, RequestThrottled, RequestTimeoutError, UndefinedRequestError, NoOverridingError} from './CoreErrors';
+
 
 export class Api implements IApi {
   Path?: string;
@@ -43,7 +36,6 @@ export class Api implements IApi {
     this.Area = CreateArea(this.Seller.Area);
   }
 
-
   public ConfigureArea(area: TArea = 'US'): void {
     this.Area = CreateArea(area);
   }
@@ -61,7 +53,7 @@ export class Api implements IApi {
     await sleepSecond(second);
   }
 
-  public CreateOptions(params?: Record<string, any>, parsing?: Record<string, any>): Options {
+  public CreateOptions(params?: Record<string, any>, parsing?: Record<string, any>): IOptions {
     if (params && hasKeyObject(parsing)) {
       const assign = {};
       for (const key of Object.keys(parsing)) {
@@ -79,9 +71,14 @@ export class Api implements IApi {
       Path, Method, Action, Version, Headers,
       Area: {Host},
       Seller: {SellerId, MWSAuthToken},
-      Setting: {IsMerchant},
+      Setting: {IsMerchant, Timeout},
       Access: {AWSAccessKeyId, AWSAccessSecret}
     } = this;
+
+    if (Action === 'SubmitFeed') {
+      throw new NoOverridingError();
+    }
+
     const Timestamp = (new Date()).toISOString();
     const RemotePath = `/${Path}/${Version}`;
     const PreParams = {Action, AWSAccessKeyId, MWSAuthToken, Timestamp, Version, ...params} as Record<string, any>;
@@ -92,31 +89,33 @@ export class Api implements IApi {
       .update([Method, Host, RemotePath, qsStringify(sortObject(PreParams))].join('\n'))
       .digest('base64');
 
-    Headers.Host = Host;
-    if (Method === 'POST') {
-      Headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    }
+    const PreOptions = {} as IOptions;
 
-    const PreOptions: Options = {
-      method: Method,
-      url: `https://${Host}/${RemotePath}`,
-      headers: Headers,
-    };
+    Headers['Host'] = Host;
     if (Method === 'GET') {
-      PreOptions.qs = PreParams;
+      PreOptions.url = `https://${Host}${RemotePath}?${qsStringify(PreParams)}`;
+      PreOptions.init = {
+        headers: Headers,
+        timeout: Timeout * 1000
+      };
     } else {
-      PreOptions.form = PreParams;
+      Headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      PreOptions.url = `https://${Host}${RemotePath}`;
+      PreOptions.init = {
+        headers: Headers,
+        timeout: Timeout * 1000,
+        method: 'POST',
+        body: qsStringify(PreParams)
+      };
     }
-
     return PreOptions;
   }
 
-  public async CreateRequest(options: Options): Promise<any> {
-    const {Convert, Retrying, Timeout, Throttled} = this.Setting;
-
+  public async CreateRequest(options: IOptions): Promise<any> {
+    const {Convert, Retrying, Throttled} = this.Setting;
     for (let i = 0; i < Retrying + 1; i++) {
       try {
-        const body = await Requesting(options);
+        const body = await RunRequest(options);
         if (Convert === 'XML') {
           return body;
         } else {
@@ -144,9 +143,10 @@ export class Api implements IApi {
     const {Action} = this;
     const res = xmlParser(body, {ignoreNameSpace: true, parseTrueNumberOnly: true}) as any;
     if (res.ErrorResponse) {
-      throw new UndefinedRequestError();
+      throw new UndefinedRequestError(body, 600);
     } else {
       return res[`${Action}Response`][`${Action}Result`];
     }
   }
+
 }

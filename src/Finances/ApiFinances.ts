@@ -1,4 +1,4 @@
-import {Api, API, isObject, isArray, listTakeOffLayer, ISeller, IAccess, API_METHOD, IGetServiceStatus, CheckParameterError} from 'src/Core';
+import {Api, API, isObject, isArray, listTakeOffLayer, ISeller, IAccess, API_METHOD, IGetServiceStatus, CheckParameterError} from '../Core';
 import {
   IReqListFinancialEventGroups, IResListFinancialEventGroups,
   IReqListFinancialEventGroupsByNextToken, IResListFinancialEventGroupsByNextToken,
@@ -77,7 +77,7 @@ export class ApiFinances extends Api {
     super(seller, access);
   }
 
-  @API_METHOD('GET')
+  @API_METHOD('POST')
   public async GetServiceStatus(): Promise<IGetServiceStatus> {
     return await this.CreateRequest(this.CreateOptions());
   }

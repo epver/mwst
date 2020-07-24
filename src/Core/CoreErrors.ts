@@ -1,139 +1,120 @@
 /* tslint:disable:max-classes-per-file */
-import {isObject, isString} from './CoreHelpers';
 
-class MwsException extends Error {
-  constructor(private readonly response: string | Record<string, any>) {
+export class CoreException extends Error {
+  constructor(
+    private readonly error: { status: number, message: string, error?: any }
+  ) {
     super();
-    this.initMessage();
+    this.name = this.constructor.name;
+    this.message = error.message;
   }
 
-  public initMessage() {
-    if (isObject(this.response) && this.constructor) {
-      this.message = this.constructor.name
-        .match(/[A-Z][a-z]+|[0-9]+/g)
-        .join(' ');
-    } else if (isString(this.response)) {
-      this.message = this.response as string;
+  public static create(body?: string | any, status: number = 0, message: string = '') {
+    if (typeof body === 'object' && !Array.isArray(body)) {
+      return {status, message, error: body};
+    } else if (typeof body === 'string') {
+      return {status, message, error: body};
     } else {
-      this.message = 'Undefined exception.';
-    }
-  }
-
-  public getXml(): string {
-    if (isObject(this.response) && !Array.isArray(this.response) && (this.response as Record<string, any>).body) {
-      return (this.response as Record<string, any>).body;
-    } else {
-      return this.message;
-    }
-  }
-
-  public getResponse(): string | object {
-    return this.response;
-  }
-
-  public static create(objectOrError: object | string, description?: string) {
-    if (isObject(objectOrError) && !Array.isArray(objectOrError)) {
-      return objectOrError;
-    } else if (isString(objectOrError)) {
-      return `${objectOrError}`;
-    } else {
-      return `${description}`;
+      return {status, message};
     }
   }
 }
 
 // request exception
-export class InputStreamDisconnected extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[400] There was an error reading the input stream.') {
-    super(MwsException.create(objectOrError, description));
+export class InputStreamDisconnected extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[400] there was an error reading the input stream.'));
   }
 }
 
-export class InvalidParameterValue extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[400] An invalid parameter value was used, or the request size exceeded the maximum accepted size, or the request expired.') {
-    super(MwsException.create(objectOrError, description));
+export class InvalidParameterValue extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[400] an invalid parameter value was used, or the request size exceeded the maximum accepted size, or the request expired.'));
   }
 
 }
 
-export class AccessDenied extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[401] Access was denied.') {
-    super(MwsException.create(objectOrError, description));
+export class AccessDenied extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[401] access was denied.'));
   }
 }
 
-export class InvalidAccessKeyId extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[403] An invalid AWSAccessKeyId value was used.') {
-    super(MwsException.create(objectOrError, description));
+export class InvalidAccessKeyId extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[403] an invalid AWSAccessKeyId value was used.'));
   }
 }
 
-export class SignatureDoesNotMatch extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[403] The signature used does not match the server\'s calculated signature value.') {
-    super(MwsException.create(objectOrError, description));
+export class SignatureDoesNotMatch extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[403] the signature used does not match the server\'s calculated signature value.'));
   }
 }
 
-export class InvalidAddress extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[404] An invalid API section or operation value was used, or an invalid path was used.') {
-    super(MwsException.create(objectOrError, description));
+export class InvalidAddress extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[404] an invalid api section or operation value was used, or an invalid path was used.'));
   }
 }
 
-export class InternalError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[500] There was an internal service failure.') {
-    super(MwsException.create(objectOrError, description));
+export class InternalError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[500] there was an internal service failure.'));
   }
 }
 
-export class QuotaExceeded extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[503] The total number of requests in an hour was exceeded.') {
-    super(MwsException.create(objectOrError, description));
+export class QuotaExceeded extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[503] the total number of requests in an hour was exceeded.'));
   }
 }
 
-export class RequestThrottled extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[503] The frequency of requests was greater than allowed.') {
-    super(MwsException.create(objectOrError, description));
+export class RequestThrottled extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[503] the frequency of requests was greater than allowed.'));
   }
 }
 
-export class UndefinedRequestError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[600] undefined request error.') {
-    super(MwsException.create(objectOrError, description));
+export class UndefinedRequestError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[600] undefined request error.'));
   }
 }
 
 // execute exception
-export class ConfigurationError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[600] config error.') {
-    super(MwsException.create(objectOrError, description));
+export class ConfigurationError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] local config error.'));
   }
 }
 
-export class LocalRequestError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[0] Local request timeout, please retry it.') {
-    super(MwsException.create(objectOrError, description));
+export class LocalRequestError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] local request error, please check network.'));
   }
 }
 
-export class RequestTimeoutError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[0] Local request error, please network or other.') {
-    super(MwsException.create(objectOrError, description));
+export class RequestTimeoutError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] local request error, please network or other.'));
   }
 }
 
-export class LocalExceededError extends MwsException{
-  constructor(objectOrError?: string | object | any, description = '[0] Local request timeout exceed.') {
-    super(MwsException.create(objectOrError, description));
+export class LocalExceededError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] local request timeout exceed.'));
   }
 }
 
-export class CheckParameterError extends MwsException {
-  constructor(objectOrError?: string | object | any, description = '[0] Local check parameter error.') {
-    super(MwsException.create(objectOrError, description));
+export class CheckParameterError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] local check parameter error.'));
   }
 }
 
-export class NoOverridingError extends MwsException {
+export class NoOverridingError extends CoreException {
+  constructor(body?: string | any, status: number = 0) {
+    super(CoreException.create(body, status, '[0] no overriding error.'));
+  }
 }

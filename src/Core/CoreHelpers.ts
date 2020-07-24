@@ -1,9 +1,9 @@
 import {join} from 'path';
 import {writeFileSync} from 'fs';
-import request, {Options, Response} from 'request';
-import {IArea, IObject, TArea} from './CoreTypes';
+import fetch from 'node-fetch';
+import {IArea, IObject, IOptions, TArea} from './CoreTypes';
 import {
-  AccessDenied,
+  AccessDenied, CoreException,
   InputStreamDisconnected,
   InternalError,
   InvalidAccessKeyId,
@@ -16,7 +16,6 @@ import {
   SignatureDoesNotMatch,
   UndefinedRequestError,
 } from './CoreErrors';
-
 
 export const isUndefined = (val: any): boolean => {
   return typeof val === 'undefined';
@@ -93,6 +92,7 @@ export const listTakeOffLayer = (key: string, ct: any): any => {
   }
 };
 
+
 export function CreateArea(area: TArea): IArea {
   const areas = {
     BR: {Id: 'A2Q3Y263D00KWC', Host: 'mws.amazonservices.com'},
@@ -114,37 +114,53 @@ export function CreateArea(area: TArea): IArea {
   return areas[area];
 }
 
-export function Requesting(options: Options): Promise<any> {
-  return new Promise((resolve, reject) => {
-    request(options, (error: any, resp: Response, body: any) => {
-      if (error && (error.code === 'ESOCKETTIMEDOUT' || error.code === 'ETIMEDOUT')) {
-        return reject(new RequestTimeoutError());
-      } else if (error) {
-        return reject(new LocalRequestError());
-      } else if (resp.statusCode === 400 && /InputStreamDisconnected/.test(body)) {
-        return reject(new InputStreamDisconnected(resp));
-      } else if (resp.statusCode === 400 && /InvalidParameterValue/.test(body)) {
-        return reject(new InvalidParameterValue(resp));
-      } else if (resp.statusCode === 401 && /AccessDenied/.test(body)) {
-        return reject(new AccessDenied(resp));
-      } else if (resp.statusCode === 403 && /InvalidAccessKeyId/.test(body)) {
-        return reject(new InvalidAccessKeyId(resp));
-      } else if (resp.statusCode === 403 && /SignatureDoesNotMatch/.test(body)) {
-        return reject(new SignatureDoesNotMatch(resp));
-      } else if (resp.statusCode === 404 && /InvalidAddress/.test(body)) {
-        return reject(new InvalidAddress(resp));
-      } else if (resp.statusCode === 500 && /InternalError/.test(body)) {
-        return reject(new InternalError(resp));
-      } else if (resp.statusCode === 503 && /QuotaExceeded/.test(body)) {
-        return reject(new QuotaExceeded(resp));
-      } else if (resp.statusCode === 503 && /RequestThrottled/.test(body)) {
-        return reject(new RequestThrottled(resp));
-      } else if (/<ErrorResponse.*>[\s\S]*<\/ErrorResponse>/.test(body)) {
-        return reject(new UndefinedRequestError(resp));
-      } else {
-        return resolve(body);
-      }
-    });
-  });
+export async function RunRequest(options: IOptions): Promise<any> {
+  try {
+    const resp = await fetch(options.url, options.init);
+    const body = await resp.text();
+    if (resp.status === 400 && /InputStreamDisconnected/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new InputStreamDisconnected(body, resp.status);
+    } else if (resp.status === 400 && /InvalidParameterValue/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new InvalidParameterValue(body, resp.status);
+    } else if (resp.status === 401 && /AccessDenied/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new AccessDenied(body, resp.status);
+    } else if (resp.status === 403 && /InvalidAccessKeyId/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new InvalidAccessKeyId(body, resp.status);
+    } else if (resp.status === 403 && /SignatureDoesNotMatch/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new SignatureDoesNotMatch(body, resp.status);
+    } else if (resp.status === 404 && /InvalidAddress/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new InvalidAddress(body, resp.status);
+    } else if (resp.status === 500 && /InternalError/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new InternalError(body, resp.status);
+    } else if (resp.status === 503 && /QuotaExceeded/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new QuotaExceeded(body, resp.status);
+    } else if (resp.status === 503 && /RequestThrottled/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new RequestThrottled(body, resp.status);
+    } else if (/<ErrorResponse.*>[\s\S]*<\/ErrorResponse>/.test(body)) {
+      // noinspection ExceptionCaughtLocallyJS
+      throw new UndefinedRequestError(body, resp.status);
+    } else {
+      return body;
+    }
+  } catch (error) {
+    if (error.code === 'ENOTFOUND') {
+      throw new LocalRequestError(error);
+    } else if (error.type === 'request-timeout') {
+      throw new RequestTimeoutError(error);
+    } else if (error instanceof CoreException) {
+      throw error
+    } else {
+      throw new UndefinedRequestError();
+    }
+  }
 }
 

@@ -143,10 +143,10 @@ export class ApiReports extends Api {
    * 恢复率         : 1/min
    * 每小时请求配额   : 60/hour
    */
-  @API_METHOD('POST', {Throttled: 60, Convert: 'XML', Timeout: 180})
+  @API_METHOD('POST', {Throttled: 60, Convert: 'XML', Timeout: 360})
   async GetReport(params: IReqGetReport): Promise<string> {
     const options = this.CreateOptions(params);
-    options.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+    options.init.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
     return await this.CreateRequest(options);
   }
 

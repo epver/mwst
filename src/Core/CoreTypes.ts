@@ -36,6 +36,16 @@ export interface ISetting {
 export interface IHeaders extends IObject {
 }
 
+export interface IOptions {
+  url: string;
+  init: {
+    headers: Record<string, string>;
+    timeout: number
+    method?: 'GET' | 'POST';
+    body?: any;
+  }
+}
+
 export interface IApi {
   Path?: string;
   Version?: string;
