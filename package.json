@@ -22,7 +22,7 @@
     "csvtojson": "^2.0.10",
     "dotenv": "^8.2.0",
     "fast-xml-parser": "^3.17.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.0"
