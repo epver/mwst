@@ -11,10 +11,10 @@ beforeAll(() => {
 afterAll(() => {
   TestServerClose();
 });
-describe('ApiEasyShip', () => {
+describe('ApiFinances', () => {
   test('api.information', () => {
     expect(api).toBeInstanceOf(ApiFinances);
-    expect(api.Path).toBe('EasyShip');
+    expect(api.Path).toBe('Finances');
     expect(api.Version).toBe('2015-06-01');
   });
 });

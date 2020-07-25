@@ -35,9 +35,9 @@ describe('CoreHelpers', () => {
   });
 
   test('.mutexChoose', () => {
-    expect(helper.mutexChoose({}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
-    expect(helper.mutexChoose({SellerSkus: [], QueryStartDateTime: ''}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
-    expect(helper.mutexChoose({SellerSkus: []}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(true);
+    expect(helper.isMutexChoose({}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
+    expect(helper.isMutexChoose({SellerSkus: [], QueryStartDateTime: ''}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
+    expect(helper.isMutexChoose({SellerSkus: []}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(true);
   });
 
   test('.sortObject', () => {

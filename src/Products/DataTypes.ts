@@ -1,6 +1,6 @@
 // http://docs.developer.amazonservices.com/en_US/products/Products_Datatypes.html
 
-import { IError } from '../Core';
+import {IError} from '../Core';
 // USD(United States dollar) | EUR(European euro) | GBP(Great Britain pounds) | RMB(Chinese yuan) | INR(Indian rupee) | JPY(Japanese yen) | CAD(Canadian dollar) | MXN(Mexican peso);
 export type TCurrencyCode = 'USD' | 'EUR' | 'GBP' | 'RMB' | 'INR' | 'JPY' | 'CAD' | 'MXN';
 export type TFeeType =
@@ -213,6 +213,11 @@ interface SalesRankings {
   SalesRank: { ProductCategoryId: string; Rank: number }[];
 }
 
+interface CompetitivePricing {
+  CompetitivePrices: any;
+  NumberOfOfferListings: any;
+}
+
 export interface IProduct {
   Identifiers?: Identifiers;
   AttributeSets?: AttributeSets;
@@ -221,11 +226,15 @@ export interface IProduct {
   Error?: IError;
 }
 
+export interface ICompetitivePricing extends IProduct {
+  CompetitivePricing?: CompetitivePricing;
+}
+
 // http://docs.developer.amazonservices.com/en_US/products/Products_ListMatchingProducts.html
 export interface IReqListMatchingProducts {
-  MarketplaceId: string;
-  Query: string;
+  MarketplaceId?: string;
   QueryContextId?: string;
+  Query: string;
 }
 
 export interface IResListMatchingProducts {
@@ -239,7 +248,7 @@ export interface IResListMatchingProducts {
 
 // http://docs.developer.amazonservices.com/en_US/products/Products_GetMatchingProduct.html
 export interface IReqGetMatchingProduct {
-  MarketplaceId: string;
+  MarketplaceId?: string;
   ASINList: string[];
 }
 
@@ -258,13 +267,24 @@ export interface IResGetMatchingProductForId {
   Products: IProduct[];
 }
 
-export interface IReqGetMatchingProductById {
-  Id: string[]; // Type:List of xs:string
-  IdType: TIdType; // Type:xs:string
+// http://docs.developer.amazonservices.com/en_US/products/Products_GetCompetitivePricingForSKU.html
+export interface IReqGetCompetitivePricingForSKU {
+  MarketplaceId?: string;
+  SellerSKUList: string[];
 }
 
-export interface IResGetMatchingProductById {
-  Product: IProduct;
+export interface IResGetCompetitivePricingForSKU {
+  Products: ICompetitivePricing[];
+}
+
+// http://docs.developer.amazonservices.com/en_US/products/Products_GetCompetitivePricingForASIN.html
+export interface IReqGetCompetitivePricingForASIN {
+  MarketplaceId?: string;
+  ASINList: string[];
+}
+
+export interface IResGetCompetitivePricingForASIN {
+  Products: ICompetitivePricing[];
 }
 
 // http://docs.developer.amazonservices.com/en_US/products/Products_GetMyFeesEstimate.html

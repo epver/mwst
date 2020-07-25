@@ -1,17 +1,18 @@
+import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isArray, isNil, CheckParameterError} from '../Core';
 import {
   IReqListMatchingProducts, IResListMatchingProducts,
   IReqGetMatchingProduct, IResGetMatchingProduct,
   IReqGetMatchingProductForId, IResGetMatchingProductForId,
-  TIdType, IProduct, IReqGetMyFeesEstimate, IResGetMyFeesEstimate,
+  IReqGetMyFeesEstimate, IResGetMyFeesEstimate,
+  IReqGetCompetitivePricingForSKU, IResGetCompetitivePricingForSKU,
+  IReqGetCompetitivePricingForASIN, IResGetCompetitivePricingForASIN,
 } from './DataTypes';
-import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isArray} from '../Core';
 
 @API('Products', '2011-10-01')
 export class ApiProducts extends Api {
   constructor(seller: ISeller, access?: IAccess) {
     super(seller, access);
   }
-
 
   @API_METHOD('POST')
   async GetServiceStatus(): Promise<IGetServiceStatus> {
@@ -25,9 +26,17 @@ export class ApiProducts extends Api {
    */
   @API_METHOD('POST', {Throttled: 0.2})
   async ListMatchingProducts(params: IReqListMatchingProducts): Promise<IResListMatchingProducts> {
+    if (isNil(params.MarketplaceId)) {
+      params.MarketplaceId = this.Area.Id;
+    }
+
     const options = this.CreateOptions(params);
     const result = await this.CreateRequest(options);
-    return {Products: result.Products.Product};
+    if (isArray(result.Products.Product)) {
+      return {Products: result.Products.Product};
+    } else {
+      return {Products: [result.Products.Product]};
+    }
   }
 
   /**
@@ -35,13 +44,17 @@ export class ApiProducts extends Api {
    * 恢复率         : 0.5/sec
    * 每小时请求配额   : 7200/hour
    */
-
   @API_METHOD('POST', {Throttled: 0.5})
   async GetMatchingProduct(params: IReqGetMatchingProduct): Promise<IResGetMatchingProduct> {
+    if (params.ASINList.length > 10) {
+      throw new CheckParameterError('ASINList array length <= 10');
+    }
+    if (isNil(params.MarketplaceId)) {
+      params.MarketplaceId = this.Area.Id;
+    }
     const options = this.CreateOptions(params, {ASINList: 'ASINList.ASIN.'});
     const result = await this.CreateRequest(options);
     if (isArray(result)) {
-      // @ts-ignore
       return {Products: result.map(item => ({...item.Product}))};
     } else {
       return {Products: [result.Product]};
@@ -55,7 +68,9 @@ export class ApiProducts extends Api {
    */
   @API_METHOD('POST', {Throttled: 0.2})
   async GetMatchingProductForId(params: IReqGetMatchingProductForId): Promise<IResGetMatchingProductForId> {
-    params.MarketplaceId = params.MarketplaceId || this.Area.Id;
+    if (isNil(params.MarketplaceId)) {
+      params.MarketplaceId = this.Area.Id;
+    }
     if (params.IdList.length > 5) {
       const parts = splitArray(params.IdList, 5);
       let partRs = null;
@@ -73,7 +88,6 @@ export class ApiProducts extends Api {
     const result = await this.CreateRequest(options);
     if (isArray(result)) {
       return {
-        // @ts-ignore
         Products: result.map(item => {
           if (item.Error) {
             return {Error: item.Error};
@@ -89,21 +103,6 @@ export class ApiProducts extends Api {
     }
   }
 
-  @API_METHOD('POST', {Throttled: 0.2})
-  async GetMatchingProductForIdOne(id: string, type: TIdType = 'SellerSKU'): Promise<IProduct> {
-    const options = this.CreateOptions({
-      MarketplaceId: this.Area.Id,
-      IdType: type,
-      'IdList.Id.1': id
-    });
-    this.Action = 'GetMatchingProductForId';
-    const result = await this.CreateRequest(options);
-    if (result.Error) {
-      return null;
-    }
-    return result.Products.Product;
-  }
-
   // ==================== 以下暂时用不到 ====================
   /**
    * 最大请求配额    : 20/max
@@ -112,8 +111,20 @@ export class ApiProducts extends Api {
    * @deprecated standing off
    */
   @API_METHOD('POST', {Throttled: 0.2})
-  async GetCompetitivePricingForSKU(params: any): Promise<any> {
-    return null;
+  async GetCompetitivePricingForSKU(params: IReqGetCompetitivePricingForSKU): Promise<IResGetCompetitivePricingForSKU> {
+    if (params.SellerSKUList.length > 20) {
+      throw new CheckParameterError('SellerSKUList array length <= 20');
+    }
+    if (isNil(params.MarketplaceId)) {
+      params.MarketplaceId = this.Area.Id;
+    }
+    const options = this.CreateOptions(params, {SellerSKUList: 'SellerSKUList.SellerSKU.'});
+    const result = await this.CreateRequest(options);
+    if (isArray(result)) {
+      return {Products: result.map(item => ({...item.Product}))};
+    } else {
+      return {Products: [result.Product]};
+    }
   }
 
   /**
@@ -123,8 +134,20 @@ export class ApiProducts extends Api {
    * @deprecated standing off
    */
   @API_METHOD('POST', {Throttled: 0.2})
-  async GetCompetitivePricingForASIN(params: any): Promise<any> {
-    return null;
+  async GetCompetitivePricingForASIN(params: IReqGetCompetitivePricingForASIN): Promise<IResGetCompetitivePricingForASIN> {
+    if (params.ASINList.length > 20) {
+      throw new CheckParameterError('SellerSKUList array length <= 20');
+    }
+    if (isNil(params.MarketplaceId)) {
+      params.MarketplaceId = this.Area.Id;
+    }
+    const options = this.CreateOptions(params, {ASINList: 'ASINList.ASIN.'});
+    const result = await this.CreateRequest(options);
+    if (isArray(result)) {
+      return {Products: result.map(item => ({...item.Product}))};
+    } else {
+      return {Products: [result.Product]};
+    }
   }
 
   /**

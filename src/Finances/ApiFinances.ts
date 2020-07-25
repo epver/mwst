@@ -71,7 +71,7 @@ function mergeFinancialEvents(cto: IResListFinancialEvents, ctn: IResListFinanci
   return cto;
 }
 
-@API('Finances', '2015-05-01')
+@API('Finances', '2015-06-01')
 export class ApiFinances extends Api {
   constructor(seller: ISeller, access?: IAccess) {
     super(seller, access);
