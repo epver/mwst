@@ -3,7 +3,7 @@ import {stringify as qsStringify} from 'querystring';
 import {parse as xmlParser} from 'fast-xml-parser';
 import {IApi, IHeaders, IAccess, ISeller, ISetting, TMethod, TArea, IArea, IOptions} from './CoreTypes';
 import {defaultAccess, defaultSeller} from './Env';
-import {CreateArea, sortObject, sleepSecond, isArray, hasKeyObject, RunRequest} from './CoreHelpers';
+import {CreateArea, sortObject, sleepSecond, isArray, RunRequest, isEmptyObject, isNil} from './CoreHelpers';
 import {ConfigurationError, LocalExceededError, QuotaExceeded, RequestThrottled, RequestTimeoutError, UndefinedRequestError, NoOverridingError, LocalParserError} from './CoreErrors';
 
 
@@ -54,7 +54,7 @@ export class Api implements IApi {
   }
 
   public CreateOptions(params?: Record<string, any>, parsing?: Record<string, any>): IOptions {
-    if (params && hasKeyObject(parsing)) {
+    if (params && !isNil(parsing) && !isEmptyObject(parsing)) {
       const assign = {};
       for (const key of Object.keys(parsing)) {
         const prefix = parsing[key];

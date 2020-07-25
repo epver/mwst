@@ -47,10 +47,6 @@ export const isEmptyObject = (val: any): boolean => {
   return isObject(val) && !isArray(val) && Object.keys(val).length === 0;
 };
 
-export const hasKeyObject = (val: any): boolean => {
-  return isObject(val) && !isArray(val) && Object.keys(val).length > 0;
-};
-
 export const sortObject = (obj: { [key: string]: any }): IObject => {
   return Object.keys(obj).sort().reduce((all, key) => {
     if (!isNil(obj[key])) {
@@ -77,10 +73,11 @@ export const dumpObject = (obj: any, dir?: string, name?: string): void => {
   const content = JSON.stringify(obj, null, '  ');
   console.log(content); // tslint:disable-line
   if (!isUndefined(dir)) {
-    writeFileSync(join(dir, `testing-${name || 'mock'}.json`), content, {encoding: 'utf-8'});
+    writeFileSync(join(dir, `testing.${name || 'mock'}.json`), content, {encoding: 'utf-8'});
   }
 };
 
+// TODO fixed how to take off layer
 export const listTakeOffLayer = (key: string, ct: any): any => {
   if (!/(^List)|(List$)/.test(key)) {
     return ct;

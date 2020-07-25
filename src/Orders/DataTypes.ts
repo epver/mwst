@@ -1,6 +1,6 @@
 // http://docs.developer.amazonservices.com/en_US/orders-2013-09-01/Orders_Datatypes.html
 
-import {IAddress} from '../Core';
+import {IAddress, IMoney} from '../Core';
 
 type TOrderStatus = 'PendingAvailability'
   | 'Pending'
@@ -44,20 +44,6 @@ export interface IInvoiceData {
   BuyerSelectedInvoiceCategory?: string; // Type:xs:string
   InvoiceTitle?: string; // Type:xs:string
   InvoiceInformation?: string; // Type:xs:string
-}
-
-/**
- * Currency type and amount.
- * --------
- * ListOrders
- * ListOrdersByNextToken
- * GetOrder
- * ListOrderItems
- * ListOrderItemsByNextToken
- */
-export interface IMoney {
-  CurrencyCode?: string; // Type:xs:string
-  Amount?: string; // Type:xs:string
 }
 
 /**
@@ -252,7 +238,7 @@ export interface IReqListOrders {
   LastUpdatedAfter?: string; // Type:xs:dateTime
   LastUpdatedBefore?: string; // Type:xs:dateTime
   OrderStatus?: string; // Type:xs:string
-  MarketplaceId?: string; // Type:xs:string
+  MarketplaceId?: string | string[]; // Type:xs:string
   FulfillmentChannel?: string; // Type:xs:string
   PaymentMethod?: string; // Type:xs:string
   BuyerEmail?: string; // Type:xs:string

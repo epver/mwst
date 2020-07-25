@@ -14,7 +14,7 @@ TypeScript bring advanced syntax tips，Help you write better。
 - [ ] FulfillmentOutboundShipment -- `v2010-10-01`
 - [ ] OffAmazonPayments -- `0000`
 - [ ] MerchantFulfillment -- `v2015-06-01`
-- [ ] Orders -- `v2013-09-01`
+- [x] Orders -- `v2013-09-01`
 - [ ] Products -- `v2011-10-01`
 - [ ] Recommendations `v2013-04-01`
 - [ ] Reports -- `v2009-01-01`

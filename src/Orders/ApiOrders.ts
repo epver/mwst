@@ -1,4 +1,4 @@
-import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isObject, isArray} from '../Core';
+import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isObject, isArray, isUndefined, isString} from '../Core';
 import {
   IReqGetOrder, IResGetOrder,
   IReqListOrders, IResListOrders,
@@ -73,9 +73,17 @@ export class ApiOrders extends Api {
 
   @API_METHOD('GET', {Throttled: 60})
   public async ListOrders(params: IReqListOrders): Promise<IResListOrders> {
-    // TODO Currently support single marketplace
-    params['MarketplaceId.Id.1'] = this.Area.Id;
+    if (isString(params.MarketplaceId)) {
+      params['MarketplaceId.Id.1'] = params.MarketplaceId;
+    } else if (isArray(params.MarketplaceId)) {
+      (params.MarketplaceId as string[]).forEach((idx, inx) => {
+        params[`MarketplaceId.Id.${inx + 1}`] = idx;
+      });
+    } else {
+      params['MarketplaceId.Id.1'] = this.Area.Id;
+    }
     delete params.MarketplaceId;
+
     const options = this.CreateOptions(params);
     return disposeOrders(await this.CreateRequest(options));
   }

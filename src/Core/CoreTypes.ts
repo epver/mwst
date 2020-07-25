@@ -92,3 +92,8 @@ export interface IError {
   Detail?: string;
 }
 
+export interface IMoney {
+  CurrencyCode?: string; // Type:xs:string
+  Amount?: string; // Type:xs:string
+}
+
