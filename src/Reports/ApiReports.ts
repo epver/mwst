@@ -1,6 +1,6 @@
 import {writeFileSync} from 'fs';
 import csvToJson from 'csvtojson';
-import {Api, API, API_METHOD, IAccess, ISeller, sleepSecond} from '../Core';
+import {Api, API, API_METHOD, IAccess, IObject, ISeller, sleepSecond} from '../Core';
 
 import {
   IReqRequestReport, IResRequestReport,
@@ -71,11 +71,18 @@ export class ApiReports extends Api {
 
   @API_METHOD('POST', {Throttled: 60})
   async GetReportRequestList(params: IReqGetReportRequestList): Promise<IResGetReportRequestList> {
-    const parsing = {
-      ReportTypeList: 'ReportTypeList.Type.',
-      ReportRequestIdList: 'ReportRequestIdList.Id.',
-      ReportProcessingStatusList: 'ReportProcessingStatusList.Status.',
-    };
+    let parsing: IObject = {}
+    if (params.ReportRequestIdList) {
+      Object.keys(params).forEach(key => {
+        if (key !== 'ReportRequestIdList') delete params[key]
+      });
+      parsing = {ReportRequestIdList: 'ReportRequestIdList.Id.'}
+    } else {
+      parsing = {
+        ReportTypeList: 'ReportTypeList.Type.',
+        ReportProcessingStatusList: 'ReportProcessingStatusList.Status.',
+      };
+    }
     const options = this.CreateOptions(params, parsing);
     return await this.CreateRequest(options);
   }
