@@ -8,7 +8,7 @@ TypeScript bring advanced syntax tips，Help you write better。
 - [x] Core
 - [ ] EasyShip -- `v2018-09-01`
 - [ ] Feeds -- `v2009-01-01`
-- [ ] Finances -- `v2015-05-01`
+- [x] Finances -- `v2015-05-01`
 - [ ] FulfillmentInboundShipment -- `v2010-10-01`
 - [ ] FulfillmentInventory -- `v2010-10-01`
 - [ ] FulfillmentOutboundShipment -- `v2010-10-01`
@@ -18,7 +18,7 @@ TypeScript bring advanced syntax tips，Help you write better。
 - [ ] Products -- `v2011-10-01`
 - [ ] Recommendations `v2013-04-01`
 - [ ] Reports -- `v2009-01-01`
-- [ ] Sellers -- `v2011-07-01`
+- [x] Sellers -- `v2011-07-01`
 - [ ] ShipmentInvoicing -- `v2018-11-01`
 - [ ] Subscriptions -- `v2013-07-01`
 

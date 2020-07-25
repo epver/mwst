@@ -1,4 +1,4 @@
-import { IResListMarketplaceParticipations } from './DataTypes';
+import {IResListMarketplaceParticipations} from './DataTypes';
 import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, listTakeOffLayer} from '../Core';
 
 function disposeMarketplaceParticipations(ct: any) {
@@ -17,19 +17,19 @@ export class ApiSellers extends Api {
 
   @API_METHOD('POST')
   public async GetServiceStatus(): Promise<IGetServiceStatus> {
-    const options= this.CreateOptions();
+    const options = this.CreateOptions();
     return await this.CreateRequest(options);
   }
 
   @API_METHOD('POST')
   public async ListMarketplaceParticipations(): Promise<IResListMarketplaceParticipations> {
-    const options= this.CreateOptions();
+    const options = this.CreateOptions();
     return disposeMarketplaceParticipations(await this.CreateRequest(options));
   }
 
   @API_METHOD('POST')
   public async ListMarketplaceParticipationsByNextToken(params: { NextToken: string }): Promise<IResListMarketplaceParticipations> {
-    const options= this.CreateOptions(params);
+    const options = this.CreateOptions(params);
     return disposeMarketplaceParticipations(await this.CreateRequest(options));
   }
 
@@ -40,7 +40,7 @@ export class ApiSellers extends Api {
     }
     let NextToken = tempRs.NextToken;
     while (NextToken) {
-      const nextRs = await this.ListMarketplaceParticipationsByNextToken({ NextToken });
+      const nextRs = await this.ListMarketplaceParticipationsByNextToken({NextToken});
       tempRs.ListParticipations = [...tempRs.ListParticipations, ...nextRs.ListParticipations];
       tempRs.ListMarketplaces = [...tempRs.ListMarketplaces, ...nextRs.ListMarketplaces];
       NextToken = nextRs.NextToken;
