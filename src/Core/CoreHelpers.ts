@@ -16,6 +16,7 @@ import {
   RequestTimeoutError,
   SignatureDoesNotMatch,
   UndefinedRequestError,
+  RequestRefusedError,
 } from './CoreErrors';
 
 export const isUndefined = (val: any): boolean => {
@@ -156,6 +157,8 @@ export async function RunRequest(options: IOptions): Promise<any> {
   } catch (error) {
     if (error.code === 'ENOTFOUND') {
       throw new LocalRequestError(error);
+    } else if (error.code === 'ECONNREFUSED') {
+      throw new RequestRefusedError(error);
     } else if (error.type === 'request-timeout') {
       throw new RequestTimeoutError(error);
     } else if (error instanceof CoreException) {

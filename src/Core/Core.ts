@@ -146,6 +146,7 @@ export class Api implements IApi {
     if (res.ErrorResponse) {
       throw new UndefinedRequestError(body, 600);
     } else if (!res[`${Action}Response`] || !res[`${Action}Response`][`${Action}Result`]){
+      console.log(body);
       throw new LocalParserError(body, 0)
     } else {
       return res[`${Action}Response`][`${Action}Result`];

@@ -95,6 +95,12 @@ export class LocalRequestError extends CoreException {
   }
 }
 
+export class RequestRefusedError extends CoreException {
+  constructor(body?: string | any, status = 0) {
+    super(CoreException.create(body, status, '[0] request refused, please check service using.'));
+  }
+}
+
 export class RequestTimeoutError extends CoreException {
   constructor(body?: string | any, status = 0) {
     super(CoreException.create(body, status, '[0] local request error, please network or other.'));

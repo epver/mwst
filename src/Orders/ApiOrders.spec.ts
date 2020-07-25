@@ -1,29 +1,27 @@
 import * as moment from 'moment';
+import {TestServerClose, TestServerStart} from '../mock';
 import {ApiOrders} from './index';
-import {MockServer} from '../mock';
 
 const api = new ApiOrders({SellerId: 'MOCK_ID', MWSAuthToken: 'MOCK_TOKEN'});
-let server = null;
+api.ConfigureArea('TEST');
+
 beforeAll(() => {
-  api.ConfigureArea('TEST');
-  server = MockServer<ApiOrders>(api);
+  TestServerStart();
 });
 
 afterAll(() => {
-  server.close();
+  TestServerClose();
 });
 
 describe('ApiOrders', () => {
   test('api.information', () => {
-    expect(api).toBeInstanceOf(ApiOrders)
+    expect(api).toBeInstanceOf(ApiOrders);
     expect(api.Path).toBe('Orders');
     expect(api.Version).toBe('2013-09-01');
   });
 
   test('api.GetServiceStatus', async () => {
-    console.time('test');
     const orders = await api.GetServiceStatus();
-    console.timeEnd('test');
 
     expect(orders).toHaveProperty('Status');
     expect(orders).toHaveProperty('Timestamp');
