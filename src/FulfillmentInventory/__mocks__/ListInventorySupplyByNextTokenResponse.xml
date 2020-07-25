@@ -30,7 +30,6 @@
                 </SupplyDetail>
             </member>
         </InventorySupplyList>
-        <NextToken>String</NextToken>
     </ListInventorySupplyByNextTokenResult>
    <ResponseMetadata>
         <RequestId>String</RequestId>

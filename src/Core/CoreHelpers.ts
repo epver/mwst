@@ -47,6 +47,14 @@ export const isEmptyObject = (val: any): boolean => {
   return isObject(val) && !isArray(val) && Object.keys(val).length === 0;
 };
 
+export const isMutexChoose = (params: { [key: string]: any }, keys: string[] = []) => {
+  if (keys.length === 0) {
+    keys = Object.keys(params);
+  }
+  const choose = keys.filter(key => !isNil(params[key]));
+  return choose.length === 1;
+};
+
 export const sortObject = (obj: { [key: string]: any }): IObject => {
   return Object.keys(obj).sort().reduce((all, key) => {
     if (!isNil(obj[key])) {
@@ -159,9 +167,9 @@ export async function RunRequest(options: IOptions): Promise<any> {
     } else if (error.type === 'request-timeout') {
       throw new RequestTimeoutError(error);
     } else if (error instanceof CoreException) {
-      throw error
+      throw error;
     } else {
-      throw new UndefinedRequestError();
+      throw new UndefinedRequestError(error);
     }
   }
 }

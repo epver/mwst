@@ -34,6 +34,12 @@ describe('CoreHelpers', () => {
     expect(helper.isEmptyObject({a: 1})).toBe(false);
   });
 
+  test('.mutexChoose', () => {
+    expect(helper.mutexChoose({}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
+    expect(helper.mutexChoose({SellerSkus: [], QueryStartDateTime: ''}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(false);
+    expect(helper.mutexChoose({SellerSkus: []}, ['SellerSkus', 'QueryStartDateTime'])).toEqual(true);
+  });
+
   test('.sortObject', () => {
     const test = helper.sortObject({b: 1, a: 1});
     expect(Object.keys(test)).toEqual(['a', 'b']);
@@ -62,7 +68,7 @@ describe('CoreHelpers', () => {
   });
 
   test('.CreateArea', () => {
-    const test = helper.CreateArea('TEST')
-    expect(test).toEqual({Id: 'TEST', Host: `127.0.0.1:${testingPort}`})
+    const test = helper.CreateArea('TEST');
+    expect(test).toEqual({Id: 'TEST', Host: `127.0.0.1:${testingPort}`});
   });
 });

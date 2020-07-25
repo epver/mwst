@@ -1,6 +1,7 @@
 import {join} from 'path';
 import {createServer} from 'http';
 import {existsSync, readFileSync} from 'fs';
+import * as moment from 'moment';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import {testingPort} from './Core/Env';
@@ -33,4 +34,7 @@ export const TestServerStart = () => {
 };
 export const TestServerClose = () => {
   if (server) server.close();
+};
+export const TestTiming = (key: 'subtract' | 'add', days = 1): string => {
+  return moment()[key](days, 'days').utc().format();
 };

@@ -1,6 +1,6 @@
-import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isObject, isArray} from '../Core';
+import {Api, API, API_METHOD, IAccess, IGetServiceStatus, ISeller, splitArray, isObject, isArray, CheckParameterError, isMutexChoose} from '../Core';
 import {
-  IReqListInventorySupply, IReqListInventorySupplyBySkus, IResListInventorySupply,
+  IReqListInventorySupply, IResListInventorySupply,
   IReqListInventorySupplyByNextToken, IResListInventorySupplyByNextToken,
 } from './DataTypes';
 
@@ -36,17 +36,19 @@ export class ApiFulfillmentInventory extends Api {
    */
   @API_METHOD('GET', {Throttled: 2})
   public async ListInventorySupply(params: IReqListInventorySupply): Promise<IResListInventorySupply> {
-    const options = this.CreateOptions(params);
-    return disposeInventorySupply(await this.CreateRequest(options));
-  }
+    if (!isMutexChoose(params, ['SellerSkus', 'QueryStartDateTime'])) {
+      throw new CheckParameterError(`The two parameters are mutually exclusive [SellerSkus,QueryStartDateTime]`);
+    }
+    if (params.QueryStartDateTime) {
+      const options = this.CreateOptions(params);
+      return disposeInventorySupply(await this.CreateRequest(options));
+    }
 
-  @API_METHOD('GET', {Throttled: 2})
-  public async ListInventorySupplyBySkus(params: IReqListInventorySupplyBySkus): Promise<IResListInventorySupply> {
     if (params.SellerSkus.length > 50) {
       const parts = splitArray(params.SellerSkus, 50);
       let partRs = null;
       for (const part of parts) {
-        const tempRs = await this.ListInventorySupplyBySkus({SellerSkus: part});
+        const tempRs = await this.ListInventorySupply({SellerSkus: part});
         if (!partRs) {
           partRs = tempRs;
         } else {
@@ -54,10 +56,10 @@ export class ApiFulfillmentInventory extends Api {
         }
       }
       return partRs;
+    } else {
+      const options = this.CreateOptions(params, {SellerSkus: 'SellerSkus.member.'});
+      return disposeInventorySupply(await this.CreateRequest(options));
     }
-    const options = this.CreateOptions(params, {SellerSkus: 'SellerSkus.member.'});
-    this.Action = 'ListInventorySupply';
-    return disposeInventorySupply(await this.CreateRequest(options));
   }
 
   @API_METHOD('GET', {Throttled: 2})

@@ -46,7 +46,8 @@ export interface ITimepoint {
 
 // http://docs.developer.amazonservices.com/en_US/fba_inventory/FBAInventory_ListInventorySupply.html
 export interface IReqListInventorySupply {
-  QueryStartDateTime: string; // Type:xs:dateTime
+  SellerSkus?: string[]; // Type:xs:string 50 max
+  QueryStartDateTime?: string; // Type:xs:dateTime
   ResponseGroup?: 'Basic' | 'Detailed'; // Type:xs:string
   MarketplaceId?: string; // Type:xs:string
 }
@@ -55,11 +56,6 @@ export interface IResListInventorySupply {
   MarketplaceId?: string; // Type:xs:string
   NextToken?: string; // Type:xs:string
   InventorySupplyList: IInventorySupply[]; // Type:List of InventorySupply
-}
-
-export interface IReqListInventorySupplyBySkus {
-  SellerSkus: string[]; // Type:xs:string 50 max
-  MarketplaceId?: string; // Type:xs:string
 }
 
 // http://docs.developer.amazonservices.com/en_US/fba_inventory/FBAInventory_ListInventorySupplyByNextToken.html
@@ -71,5 +67,3 @@ export interface IResListInventorySupplyByNextToken {
   NextToken?: string; // Type:xs:string
   InventorySupplyList?: IInventorySupply[]; // Type:List of InventorySupply
 }
-
-// http://docs.developer.amazonservices.com/en_US/fba_inventory/MWS_GetServiceStatus.html
