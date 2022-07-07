@@ -23,7 +23,7 @@
     "dotenv": "^8.2.0",
     "fast-xml-parser": "^3.17.4",
     "lodash": "^4.17.19",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.0"
   },
